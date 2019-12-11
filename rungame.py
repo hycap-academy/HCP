@@ -40,17 +40,17 @@ intro=True
 
 
 class object():
-    def __init__(self, coordx, coordy, direction, imgFile):
+    def __init__(self, coordx, coordy, direction, sImg):
         self.initx = coordx
         self.inity = coordy
         self.initdir = direction
         self.x = coordx
         self.y = coordy
         self.direction=direction
+        self.OrigSurfImg=sImg
         # direction: 0=north, 1=west, 2=south, 3=east
-        self.imgFile = imgFile
         self.turn=0  
-        self.surfImg = pygame.transform.rotate(pygame.transform.scale(pygame.image.load(self.imgFile), (TILESIZE, TILESIZE)), self.direction*90)
+        self.surfImg = pygame.transform.rotate(self.OrigSurfImg, self.direction*90)
         self.trail=[]
 
     def reset(self):
@@ -73,7 +73,11 @@ class object():
             else:
                 self.direction=0
             
-            self.surfImg = pygame.transform.rotate(pygame.transform.scale(pygame.image.load(self.imgFile), (TILESIZE, TILESIZE)), self.direction*90)
+            self.surfImg = pygame.transform.rotate(self.OrigSurfImg, self.direction*90)
+            
+            if self.turn==masterTurn-1:
+                textScroll("Turning Left")
+
             self.turn+=1
 
     def turnRight(self):
@@ -83,7 +87,11 @@ class object():
             else:
                 self.direction=3
                 
-            self.surfImg = pygame.transform.rotate(pygame.transform.scale(pygame.image.load(self.imgFile), (TILESIZE, TILESIZE)), self.direction*90)
+            self.surfImg = pygame.transform.rotate(self.OrigSurfImg, self.direction*90)
+            
+            if self.turn==masterTurn-1:
+                textScroll("Turning Right")
+
             self.turn+=1
 
     def moveForward(self):
@@ -160,16 +168,6 @@ class object():
         if self.turn < masterTurn:
             
             x, y = self.getFrontSquare(self.x, self.y, self.direction)
-            #x = self.x
-            #y = self.y
-            #if self.direction==0: # north
-            #    y-=1
-            #elif self.direction==1: # west
-            #    x -=1
-            #elif self.direction==2: #south
-            #    y+=1
-            #elif self.direction==3: #east
-            #    x+=1
 
             gotSecret=False
             for o in objects:
@@ -242,24 +240,26 @@ class object():
 
 
 class player(object):
-    def __init__(self, coordx, coordy,  ai, direction, imgFile):
-        super().__init__(coordx, coordy,direction, imgFile)
+    def __init__(self, coordx, coordy,  ai, direction, sImg):
+        super().__init__(coordx, coordy,direction, sImg)
         self.health=100
         self.ai = ai
         ai.robot = self
         # 1 = player1, 2=base
         self.type = 1
-        self.imgFile = imgFile
+        self.OrigSurfImg = sImg
+        self.surfImg = pygame.transform.rotate(self.OrigSurfImg, self.direction*90)
         self.direction = direction
             
 
 class base(object):
-    def __init__(self, coordx, coordy, ai, direction, imgFile, subType):
-        super().__init__(coordx, coordy, direction, imgFile)
+    def __init__(self, coordx, coordy, ai, direction, sImg, subType):
+        super().__init__(coordx, coordy, direction, sImg)
         self.subType = subType
         # 1 = player1, 2=base
         self.type = 2
-        self.imgFile = imgFile
+        self.OrigSurfImg = sImg
+        self.surfImg = pygame.transform.rotate(self.OrigSurfImg, self.direction*90)
         self.direction = direction
         self.ai = ai
         ai.robot = self
@@ -365,7 +365,7 @@ def chooseLevel(levelfile, solnfile):
         
 
     for lo in los:
-        #x,y,direction, imgFile, type, SubType
+        #x,y,direction, sImg, type, SubType
         #type: 1=player, 2=base
         if lo[4]==1:  #player
             objects.append( player(lo[0],lo[1], ai1.AI(), lo[2], lo[3])) #player1
@@ -551,8 +551,9 @@ while True:
                 loseMsg="You must finish this level in less than " + str(maxTurns) + " turns."
 
             
-            if state=="":
-                textScroll("This is turn:" + str(masterTurn))
+            if state=="" and len(textList) > 0:
+                if "This is turn:" not in textList[0]:
+                    textScroll("This is turn:" + str(masterTurn))
 
             drawBattlefieldPygame()
             

@@ -12,7 +12,9 @@ class AI:
         #  Start below the line
         ###__________________________________
 
+        self.robot.turnRight()
+        for x in range(0,3):
+            self.robot.moveForward()
+        self.robot.turnLeft()
         for y in range(0,3):
-            for x in range(0,4):
-                self.robot.moveForward()
-            self.robot.turnRight()
+            self.robot.moveForward()

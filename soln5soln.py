@@ -1,7 +1,7 @@
 
 class AI:
     def __init__(self):
-        print("soln5 AI loaded")
+        print("soln4 AI loaded")
 
     def turn(self):
         #  Your code goes here.
@@ -12,7 +12,7 @@ class AI:
         #  Start below the line
         ###__________________________________
 
-        for y in range(1,5):
-            for x in range(0,y):
+        for y in range(0,3):
+            for x in range(0,4):
                 self.robot.moveForward()
             self.robot.turnRight()

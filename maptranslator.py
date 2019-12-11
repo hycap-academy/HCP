@@ -3,10 +3,22 @@ import pygame
 class MapMaker():
     def __init__(self):
         print("Map Maker Initialized")
+        self.TILESIZE=50
+
+    def getSurf(self, surfType):
+        ss = spritesheet('overworld_tileset_grass.png')
+        if surfType=="basered":
+            return pygame.transform.scale(ss.image_at((2*16+1, 16*16+1, 16, 16)).convert_alpha(), (self.TILESIZE, self.TILESIZE))
+        elif surfType =="baseblack":
+            return pygame.transform.scale(ss.image_at((2*16+1, 17*16+1, 16, 16)).convert_alpha(), (self.TILESIZE, self.TILESIZE))
+        elif surfType =="baseblack":
+            return pygame.transform.scale(ss.image_at((2*16+1, 18*16+1, 16, 16)).convert_alpha(), (self.TILESIZE, self.TILESIZE))
+        elif surfType=="dozerblue":
+            return pygame.transform.scale(pygame.image.load("DozerBlue.png").convert_alpha(), (self.TILESIZE, self.TILESIZE))
 
     def makeMap(self, map):
         self.map = map.replace("\n", "").replace("\t", "")
-        self.TILESIZE=50
+        
         ss = spritesheet('overworld_tileset_grass.png')
 
         #G = Grass (1-9)
@@ -145,12 +157,15 @@ class spritesheet(object):
     def image_at(self, rectangle, colorkey = None):
         "Loads image from x,y,x+offset,y+offset"
         rect = pygame.Rect(rectangle)
-        image = pygame.Surface(rect.size).convert()
+        image = pygame.Surface(rect.size).convert_alpha()
         image.blit(self.sheet, (0, 0), rect)
         if colorkey is not None:
             if colorkey is -1:
                 colorkey = image.get_at((0,0))
             image.set_colorkey(colorkey, pygame.RLEACCEL)
+        else:
+            image.set_colorkey((0,0,0,255), pygame.RLEACCEL)
+        
         return image
     # Load a whole bunch of images and return them as a list
     def images_at(self, rects, colorkey = None):

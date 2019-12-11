@@ -8,16 +8,16 @@ class Map():
 
     def loadTiles(self):
         
-        map = """wqwhwhwhwhwhg1g1g1g1
-                wvg1g1g1g1g1g1g1g1g1
-                wzwhwhwhwhwhg1g1g1g1
-                g1g1g1g1g1g1g1g1g1g1
-                g1g1g1g1g1g1g1g1g1g1
-                g1g1g1g1g1g1g1g1g1g1
-                g1g1g1g1g1g1g1g1g1g1
-                g1g1g1g1g1g1g1g1g1g1
-                g1g1g1g1g1g1g1g1g1g1
-                g1g1g1g1g1g1g1g1g1g1"""
+        map ="""wqwhwhwhweg1g1g1g1g1
+                wvg1g1g1wvg1g1g1g1g1
+                wzwhweg1wvg1g1g1g1g1
+                g1g1wvg1wvg1g1g1g1g1
+                g1g1wvg1wzwhweg1g1g1
+                g1g1wvg1g1g1wvg1g1g1
+                g1g1wzweg1wqwcg1g1g1
+                g1g1g1wvg1wvg1g1g1g1
+                g1g1g1wvg1wvg1g1g1g1
+                g1g1g1wzwhwcg1g1g1g1"""
 
 
 
@@ -29,7 +29,7 @@ class Map():
 class LevelObjects():
     def __init__(self):
         print("loading level objects")
-        self.MaxTurns=10
+        self.MaxTurns=25
 
     def loadObjects(self):
         levelObjects=[]
@@ -39,9 +39,9 @@ class LevelObjects():
         m = maptranslator.MapMaker()
         levelObject=[1,1,3,m.getSurf("dozerblue"),1]
         levelObjects.append(levelObject)
-
-        
-        levelObject=[5,1,0, m.getSurf("basered"), 2,1, "baseAITouchbase"]
+        levelObject=[5,5,0, m.getSurf("basered"), 2,1, "baseAITellOnly"]
+        levelObjects.append(levelObject)
+        levelObject=[4,8,0, m.getSurf("baseblack"), 2,1, "baseAIPrintOnly"]
         levelObjects.append(levelObject)
         return levelObjects
 
@@ -50,7 +50,7 @@ class Instructions():
         print("loading instructions")
 
     def loadInstructions(self):
-        return "Move your dozer to the blue base \n by using the self.robot.moveForward() command."
+        return "Move your dozer to the red base, \n get the secret code by using\n self.robot.getInfo(),\n then print at the black base \nusing self.robot.print()."
 
 class Validate():
     def __init__(self):

@@ -7,19 +7,16 @@ class Map():
 
 
     def loadTiles(self):
-        
-        map = """wqwhwhwhwhwhg1g1g1g1
-                wvg1g1g1g1g1g1g1g1g1
-                wzwhwhwhwhwhg1g1g1g1
-                g1g1g1g1g1g1g1g1g1g1
-                g1g1g1g1g1g1g1g1g1g1
-                g1g1g1g1g1g1g1g1g1g1
-                g1g1g1g1g1g1g1g1g1g1
-                g1g1g1g1g1g1g1g1g1g1
+        map ="""g1g1g1g1g1g1g1g1g1g1
+                g1wqwhweg1g1g1g1g1g1
+                g1wvg1wvg1g1g1g1g1g1
+                g1wvg1wawhwhweg1g1g1
+                g1wvg1wvg1g1wvg1g1g1
+                g1wvg1wzwhg1wvg1g1g1
+                g1wvg1g1g1g1wvg1g1g1
+                g1wzwhwhwhwhwcg1g1g1
                 g1g1g1g1g1g1g1g1g1g1
                 g1g1g1g1g1g1g1g1g1g1"""
-
-
 
         m = maptranslator.MapMaker()
         mapTiles = m.makeMap(map)
@@ -36,9 +33,10 @@ class LevelObjects():
         #x,y,direction, imgFile, type, SubType, AI File
         #type: 1=player, 2=base
         # direction: 0=north, 1=west, 2=south, 3=east
-        levelObject=[1,1,3,"img/characters/DozerBlue.png",1]
+        m = maptranslator.MapMaker()
+        levelObject=[4,4,3,m.getSurf("dozerblue"),1]
         levelObjects.append(levelObject)
-        levelObject=[5,1,1, "img/other/base.png", 2,1, "baseAITellSecret"]
+        levelObject=[2,2,0, m.getSurf("basered"), 2,1, "baseAITouchbase"]
         levelObjects.append(levelObject)
         return levelObjects
 
@@ -47,11 +45,37 @@ class Instructions():
         print("loading instructions")
 
     def loadInstructions(self):
-        return "Move your dozer to the blue base, \n get the secret code by using\n self.robot.getInfo(),\n then print using self.robot.print()."
+        return "Move your dozer to the blue base \n by using a single self.robot.moveForward() \ncommand and a for loop."
+
 
 class Validate():
     def __init__(self):
         print("loading validation")
 
     def validateSoln(self, filename):
-        return ""
+        filename = filename+".py"
+        f = open(filename, "r")
+
+        inCode=False
+        hasForLoop=False
+        NumOfMoveForward=0
+        line=f.readline()
+
+        while line:
+            line = line.strip()
+            if inCode==False:
+                if line[:3]=="###":
+                    inCode=True
+            else:
+                if line[:3]=="for":
+                    hasForLoop=True
+
+                if "moveForward" in line:
+                    NumOfMoveForward+=1
+
+            line=f.readline()
+        
+        if NumOfMoveForward < 2 and hasForLoop:
+            return ""
+        else:
+            return "You must use 2 for loops\n and a single moveForward\n and moveRight command."

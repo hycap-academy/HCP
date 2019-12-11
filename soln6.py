@@ -1,25 +1,34 @@
 #  GOAL:
-#  Your goal is to move the dozer to the base, then use the getInfo command to get the secret number.
-#  Then, you must print the number at the base using self.robot.print
+#  Your goal is to move the dozer to the base using self.robot.moveForward(), self.robot.turnRight()
+#  and 2 for loops.  A for loop looks like this:
+#  for x in range(0, 2):  OR  for x in range(2):
+#  This will loop 2 times.
+
+#  Remember to indent everything using a tab that you would like to repeat in the loop.
+#  Here is an example of a double for loop printing hello 100 times:
+#  for x in range(0,10):
+#      for y in range(0,10):
+#          print("hello")
+#          print(x, y)
+
+#  HINT:
+#  For this puzzle, notice that the number of moveForward will have to increase with each iteration.
+#  Try something like this:
+#  for x in range(1,4):
+#      for y in range(0, x):  #counts from 0 to whatever is x is.
+
 
 class AI:
     def __init__(self):
-        print("soln1 AI loaded")
+        print("soln6 AI loaded")
 
     def turn(self):
         #  Your code goes here.
         #  Make sure that you indent properly
-        #  The command you want to use is:  
-        #  self.robot.moveForward()
-        #  Use the following command to get the secret from the base
-        #  secret = self.robot.getInfo()
-        #  Use the following command to print the secret at the base
-        #  self.robot.print(secret)
+        #  Please use 2 for loops and a single  
+        #   self.robot.moveForward() and self.robot.moveRight()
+        #  command.
         #  Start below the line
         ###__________________________________
 
         self.robot.moveForward()
-        self.robot.moveForward()
-        self.robot.moveForward()
-        secret = self.robot.getInfo()
-        self.robot.print(secret)

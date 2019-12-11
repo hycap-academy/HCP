@@ -26,16 +26,17 @@ class Map():
 class LevelObjects():
     def __init__(self):
         print("loading level objects")
-        self.MaxTurns=25
+        self.MaxTurns=10
 
     def loadObjects(self):
         levelObjects=[]
         #x,y,direction, imgFile, type, SubType, AI File
         #type: 1=player, 2=base
         # direction: 0=north, 1=west, 2=south, 3=east
-        levelObject=[1,1,3,"img/characters/DozerBlue.png",1]
+        m = maptranslator.MapMaker()
+        levelObject=[1,1,3,m.getSurf("dozerblue"),1]
         levelObjects.append(levelObject)
-        levelObject=[5,1,1, "img/other/base.png", 2,1, "baseAITouchbase"]
+        levelObject=[5,1,0, m.getSurf("basered"), 2,1, "baseAITouchbase"]
         levelObjects.append(levelObject)
         return levelObjects
 
@@ -68,9 +69,9 @@ class Validate():
             else:
                 if line[:3]=="for":
                     hasForLoop=True
-
-                if "moveForward" in line:
-                    NumOfMoveForward+=1
+                if line.strip()[:1]!="#":
+                    if "moveForward" in line:
+                        NumOfMoveForward+=1
 
             line=f.readline()
         

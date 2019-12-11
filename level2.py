@@ -13,7 +13,7 @@ class Map():
                 g1g1wvg1wvg1g1g1g1g1
                 g1g1wvg1wzwhg1g1g1g1
                 g1g1wvg1g1g1g1g1g1g1
-                g1g1wzwhweweg1g1g1g1
+                g1g1wzwhwhwhg1g1g1g1
                 g1g1g1g1g1g1g1g1g1g1
                 g1g1g1g1g1g1g1g1g1g1
                 g1g1g1g1g1g1g1g1g1g1"""
@@ -26,16 +26,17 @@ class Map():
 class LevelObjects():
     def __init__(self):
         print("loading level objects")
-        self.MaxTurns=25
+        self.MaxTurns=15
 
     def loadObjects(self):
         levelObjects=[]
         #x,y,direction, imgFile, type, SubType, AI File
         #type: 1=player, 2=base
         # direction: 0=north, 1=west, 2=south, 3=east
-        levelObject=[1,1,3,"img/characters/DozerBlue.png",1]
+        m = maptranslator.MapMaker()
+        levelObject=[1,1,3,m.getSurf("dozerblue"),1]
         levelObjects.append(levelObject)
-        levelObject=[5,5,1, "img/other/base.png", 2,1, "baseAITouchbase"]
+        levelObject=[5,5,0, m.getSurf("basered"), 2,1, "baseAITouchbase"]
         levelObjects.append(levelObject)
         return levelObjects
 
