@@ -15,3 +15,4 @@ class AI:
         ###__________________________________
 
         self.robot.moveForward()
+        self.robot.moveForward()

@@ -1,6 +1,7 @@
 import pygame, sys
 import time
 import math
+import importlib
 from random import randint
 
 
@@ -338,10 +339,12 @@ def chooseLevel(levelfile, solnfile):
     intro=False
     #Dynamically import the robots as modules
     #ai1name=input("What is the name of your bot?").strip()
-    #ai1 = __import__(ai1name) 
-    #ai2 = __import__(ai2name)
-    ai1 = __import__(solnfile)
-    level = __import__(levelfile)
+
+    importlib.invalidate_caches()
+    ai1 = importlib.import_module(solnfile)
+    importlib.reload(ai1)
+
+    level = importlib.import_module(levelfile)
 
     aryTiles.clear()
     m = level.Map(TILESIZE)
