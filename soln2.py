@@ -22,7 +22,5 @@ class AI:
         self.robot.moveForward()
         self.robot.moveForward()
         self.robot.turnRight()
-        self.robot.moveForward()
-        self.robot.moveForward()
         self.robot.turnLeft()
         self.robot.moveForward()
