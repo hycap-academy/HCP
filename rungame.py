@@ -20,6 +20,8 @@ aryTiles = []
 objects=[]
 instructions = ""
 loseMsg=""
+currentLevelFile=""
+currentSolnFile=""
 
 
 BLACK=(0,0,0)
@@ -334,8 +336,24 @@ def drawIntro(levels):
     pygame.display.update()
     clock.tick(15)
 
-def chooseLevel(levelfile, solnfile):
-    global intro, aryTiles, objects, instructions, maxTurns, state, loseMsg
+def chooseLevel(levelfile=currentLevelFile, solnfile=currentSolnFile):
+    global intro, aryTiles, objects, instructions, maxTurns, state, loseMsg, currentLevelFile, currentSolnFile
+    global state, masterTurn, maxTurns
+    masterTurn=0
+    maxTurns=100
+    state=""
+    
+    
+    if levelfile !='':
+        currentLevelFile = levelfile
+    else:
+        levelfile = currentLevelFile
+
+    if solnfile != '':
+        currentSolnFile = solnfile
+    else:
+        solnfile = currentSolnFile
+
     intro=False
     #Dynamically import the robots as modules
     #ai1name=input("What is the name of your bot?").strip()
@@ -374,14 +392,16 @@ def chooseLevel(levelfile, solnfile):
             objects.append( player(lo[0],lo[1], ai1.AI(), lo[2], lo[3])) #player1
         elif lo[4]==2:  #base
             ai = __import__(lo[6])
-            objects.append( base(lo[0],lo[1], ai.AI(),lo[2], lo[3], lo[5]))
-
+            try:
+                objects.append( base(lo[0],lo[1], ai.AI(lo[7]),lo[2], lo[3], lo[5]))
+            except IndexError:
+                objects.append( base(lo[0],lo[1], ai.AI(),lo[2], lo[3], lo[5]))
+                
 def GoToIntro():
-    global state, masterTurn, intro
-    masterTurn=0
-    maxTurns=100
+    global intro
+
     intro=True
-    state=""
+
 
 
 def drawBattlefieldPygame():
@@ -440,7 +460,7 @@ def drawBattlefieldPygame():
 
         BUTTON_WIDTH = 100
         BUTTON_HEIGHT = 30
-        button("New Level",int(DISPLAY_WIDTH)-int(BUTTON_WIDTH),int(DISPLAY_HEIGHT) - int(BUTTON_HEIGHT),BUTTON_WIDTH,BUTTON_HEIGHT,GREEN,BRIGHT_GREEN,action=GoToIntro)
+        button("New Level",int(DISPLAY_WIDTH)-int(rectw/2)-int(BUTTON_WIDTH),int(DISPLAY_HEIGHT) - int(BUTTON_HEIGHT)-10,BUTTON_WIDTH,BUTTON_HEIGHT,GREEN,BRIGHT_GREEN,action=GoToIntro)
     elif state=="lose":
         rectw = int(DISPLAY_WIDTH*3/7)
         recth = int(DISPLAY_HEIGHT*3/7)
@@ -452,7 +472,8 @@ def drawBattlefieldPygame():
 
         BUTTON_WIDTH = 100
         BUTTON_HEIGHT = 30
-        button("Try Again",int(DISPLAY_WIDTH)-int(BUTTON_WIDTH),int(DISPLAY_HEIGHT) - int(BUTTON_HEIGHT),BUTTON_WIDTH,BUTTON_HEIGHT,GREEN,BRIGHT_GREEN,action=GoToIntro)
+        button("Try Again",int(DISPLAY_WIDTH)-int(rectw*2/3)-int(BUTTON_WIDTH),int(DISPLAY_HEIGHT) - int(BUTTON_HEIGHT)-10,BUTTON_WIDTH,BUTTON_HEIGHT,GREEN,BRIGHT_GREEN,action=chooseLevel)
+        button("Back to Levels",int(DISPLAY_WIDTH)-int(rectw*1/4)-int(BUTTON_WIDTH),int(DISPLAY_HEIGHT) - int(BUTTON_HEIGHT)-10,BUTTON_WIDTH,BUTTON_HEIGHT,GREEN,BRIGHT_GREEN,action=GoToIntro)
     pygame.display.update()
 
     #add a delay between frames

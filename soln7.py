@@ -2,6 +2,7 @@
 #  Your goal is to move the dozer to the base, then use the getInfo command to get the secret number.
 #  Then, you must print the number at the base using self.robot.print
 
+
 class AI:
     def __init__(self):
         print("soln6 AI loaded")

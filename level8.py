@@ -1,4 +1,5 @@
 import pygame
+import random
 import maptranslator
 
 class Map():
@@ -32,6 +33,8 @@ class LevelObjects():
         self.MaxTurns=25
 
     def loadObjects(self):
+
+        secret = random.randrange(1,100) 
         levelObjects=[]
         #x,y,direction, imgFile, type, SubType, AI File
         #type: 1=player, 2=base
@@ -39,9 +42,9 @@ class LevelObjects():
         m = maptranslator.MapMaker()
         levelObject=[1,1,3,m.getSurf("dozerblue"),1]
         levelObjects.append(levelObject)
-        levelObject=[5,5,0, m.getSurf("basered"), 2,1, "baseAITellOnly"]
+        levelObject=[5,5,0, m.getSurf("basered"), 2,1, "baseAITellOnly", secret]
         levelObjects.append(levelObject)
-        levelObject=[4,8,0, m.getSurf("baseblack"), 2,1, "baseAIPrintOnly"]
+        levelObject=[4,8,0, m.getSurf("baseblack"), 2,1, "baseAIPrintOnly", secret]
         levelObjects.append(levelObject)
         return levelObjects
 

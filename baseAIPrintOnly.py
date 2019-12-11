@@ -1,9 +1,9 @@
 import random
 
 class AI:
-    def __init__(self):
+    def __init__(self, secret=None):
         print("Tell Secret AI loaded")
-        self.secret = random.randrange(1,100) 
+        self.secret = secret 
         self.missionStatus = 0
 
     def turn(self):
