@@ -26,8 +26,9 @@ class AI:
         #       "right" is mostly right of the player
 
         #  You can check if there is something in front of you:
-        #  objType, name = self.robot.checkObjectForward()
-        #  objType will return 1 for player and 2 for base.  It will return 0 if there is nothing.
+        #  obj = self.robot.checkObjectForward()
+        #  obj.type will return 1 for player and 2 for base.  It will return 0 if there is nothing.
+        #  obj.name will return the name of the object
         #  You can also checkObjectRight() and checkObjectLeft()
         #
         #  Use self.robot.attack() to damage a player in front of you for 5-10 points

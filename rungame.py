@@ -236,8 +236,6 @@ class object():
         obj.type=0
         obj.name=""
         obj.health=0
-
-
         return obj
 
     def checkObjectLeft(self):
@@ -245,16 +243,24 @@ class object():
         x, y = self.getLeftSquare(self.x, self.y, self.direction)
         for o in objects:
             if o.x==x and o.y==y and o.checkAlive(o, self.turn):
-                return o.type, o.name
-        return 0, ""
+                return o
+        obj = object(-1,-1,0,pygame.Surface((1,1)))
+        obj.type=0
+        obj.name=""
+        obj.health=0
+        return obj
 
     def checkObjectRight(self):
         global objects
         x, y = self.getRightSquare(self.x, self.y, self.direction)
         for o in objects:
             if o.x==x and o.y==y and o.checkAlive(o, self.turn):
-                return o.type, o.name
-        return 0, ""
+                return o
+        obj = object(-1,-1,0,pygame.Surface((1,1)))
+        obj.type=0
+        obj.name=""
+        obj.health=0
+        return obj
 
     def getFrontSquare(self, x, y, direction):
         newx = x
