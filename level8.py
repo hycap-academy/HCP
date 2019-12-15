@@ -40,11 +40,12 @@ class LevelObjects():
         #type: 1=player, 2=base
         # direction: 0=north, 1=west, 2=south, 3=east
         m = maptranslator.MapMaker()
-        levelObject=[1,1,3,m.getSurf("dozerblue"),1]
+        soln= __name__.replace("level", "soln")
+        levelObject=[1,1,3,m.getSurf("dozerblue"),1,0, soln, "player blue"]
         levelObjects.append(levelObject)
-        levelObject=[5,5,0, m.getSurf("basered"), 2,1, "baseAITellOnly", secret]
+        levelObject=[5,5,0, m.getSurf("basered"), 2,1, "baseAITellOnly", "base 1", secret]
         levelObjects.append(levelObject)
-        levelObject=[4,8,0, m.getSurf("baseblack"), 2,1, "baseAIPrintOnly", secret]
+        levelObject=[4,8,0, m.getSurf("baseblack"), 2,1, "baseAIPrintOnly", "base 2", secret]
         levelObjects.append(levelObject)
         return levelObjects
 

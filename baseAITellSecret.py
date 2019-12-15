@@ -15,6 +15,6 @@ class AI:
 
     def validateSecret(self, intGuess):
         if intGuess==self.secret:
-            self.missionStatus=2
+            self.missionStatus=1
         else:
             self.missionStatus=0

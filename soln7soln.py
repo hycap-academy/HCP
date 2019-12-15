@@ -1,10 +1,12 @@
 #  GOAL:
 #  Your goal is to move the dozer to the base, then use the getInfo command to get the secret number.
 #  Then, you must print the number at the base using self.robot.print
-
+import inspect
+if "rungame" not in inspect.getmodule(inspect.stack()[0])._filesbymodname["__main__"]:
+    import rungame
 class AI:
     def __init__(self):
-        print("soln1 AI loaded")
+        print(__name__ + " AI Loaded")
 
     def turn(self):
         #  Your code goes here.

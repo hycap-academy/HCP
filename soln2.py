@@ -2,12 +2,14 @@
 #  Your goal is to move the dozer to the base using self.robot.moveForward() 
 #  self.robot.turnRight(), and self.robot.turnLeft()
 
-
+import inspect
+if "rungame" not in inspect.getmodule(inspect.stack()[0])._filesbymodname["__main__"]:
+    import rungame
 
 
 class AI:
     def __init__(self):
-        print("soln2 AI loaded")
+        print(__name__ + " AI Loaded")
 
     def turn(self):
        #  Your code goes here.

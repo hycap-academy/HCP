@@ -4,14 +4,14 @@ import math
 import importlib
 from random import randint
 
-
 from pygame.locals import *
 
 DISPLAY_WIDTH=800
-DISPLAY_HEIGHT=600
+DISPLAY_HEIGHT=800
 TILESIZE = 50
 LINEWIDTH = 5
 masterTurn=0
+
 maxTurns=100
 state = ""
 textList = []
@@ -31,14 +31,16 @@ GREEN=(0,200,0)
 BRIGHT_GREEN=(150,255,150)
 RED=(200,0,0)
 BRIGHT_RED=(255,150,150)
+BLUE=(0,0,255)
 
 pygame.init()
 screen = pygame.display.set_mode((DISPLAY_WIDTH,DISPLAY_HEIGHT))
 textfont = pygame.font.SysFont("Arial", 20)
 instructionFont = pygame.font.SysFont("Arial", 24)
+font = pygame.font.Font("freesansbold.ttf",14)
+smallfont = pygame.font.Font("freesansbold.ttf",10)
 clock = pygame.time.Clock()
 intro=True
-
 
 
 
@@ -55,6 +57,9 @@ class object():
         self.turn=0  
         self.surfImg = pygame.transform.rotate(self.OrigSurfImg, self.direction*90)
         self.trail=[]
+        self.healthHistory = {}
+        
+        
 
     def reset(self):
         self.x = self.initx
@@ -62,6 +67,7 @@ class object():
         self.direction = self.initdir
         self.turn=0
         self.trail=[]
+        self.health=100
 
     def addTrail(self):
         self.trail.append((self.x, self.y))
@@ -79,7 +85,7 @@ class object():
             self.surfImg = pygame.transform.rotate(self.OrigSurfImg, self.direction*90)
             
             if self.turn==masterTurn-1:
-                textScroll("Turning Left")
+                textScroll(self.turn, "Turning Left")
 
             self.turn+=1
 
@@ -93,56 +99,37 @@ class object():
             self.surfImg = pygame.transform.rotate(self.OrigSurfImg, self.direction*90)
             
             if self.turn==masterTurn-1:
-                textScroll("Turning Right")
+                textScroll(self.turn, "Turning Right")
 
             self.turn+=1
+
+
+                            
+
 
     def moveForward(self):
         status =""
         if self.turn < masterTurn:
-            if self.direction==0: # north
-                if self.y > 0:
-                    if (aryTiles[self.x][self.y-1][1]==0):
-                        self.addTrail()
-                        self.y-=1
-                        status = "Moved North"
-                    else:
-                        status = "Blocked by obstacle"
-                else:
-                    status = "Blocked by border"
-            elif self.direction==1: # west
-                if self.x > 0:
-                    if (aryTiles[self.x-1][self.y][1]==0):
-                        self.addTrail()
-                        self.x -=1
-                        status = "Moved West"
-                    else:
-                        status ="Blocked by obstacle"
-                else:
-                    status = "Blocked by border"
-            elif self.direction==2: #south
-                if self.y <10:
-                    if (aryTiles[self.x][self.y+1][1]==0):
-                        self.addTrail()
-                        self.y+=1
-                        status = "Moved South"
-                    else:
-                        status = "Blocked by obstacle"
-                else:
-                    status = "Blocked by border"
-            elif self.direction==3: #east
-                if self.x <10:
-                    if (aryTiles[self.x+1][self.y][1]==0):
-                        self.addTrail()
-                        self.x+=1
-                        status = "Moved East"
-                    else:
-                        status = "Blocked by obstacle"
-                else:
-                    status = "Blocked by border"
+            x, y = self.getFrontSquare(self.x, self.y, self.direction)
+            if self.checkForObstacles(x,y)==0:
+                self.addTrail()
+                if self.direction==0: # north
+                    self.y-=1
+                    status = "Moved North"
+                elif self.direction==1: # west
+                    self.x -=1
+                    status = "Moved West"
+                elif self.direction==2: #south
+                    self.y+=1
+                    status = "Moved South"
+                elif self.direction==3: #east
+                    self.x+=1
+                    status = "Moved East"
+            else:
+                status = "Blocked by obstacle"
             
             if self.turn==masterTurn-1:
-                textScroll(status)
+                textScroll(self.turn, status)
             
             self.turn+=1
 
@@ -179,16 +166,16 @@ class object():
                         try:
                             secret = o.ai.getSecret()
                             if self.turn==masterTurn-1:
-                                textScroll("Received Secret:" + str(secret))
+                                textScroll(self.turn, "Received Secret:" + str(secret))
                             gotSecret=True
                             
                         except:
                             if self.turn==masterTurn-1:
-                                textScroll("This base does not have a secret")
+                                textScroll(self.turn, "This base does not have a secret")
             
             if gotSecret==False:
                 if self.turn==masterTurn-1:
-                    textScroll("Failed to get secret")
+                    textScroll(self.turn, "Failed to get secret")
 
             self.turn+=1
             return secret
@@ -206,20 +193,68 @@ class object():
                         try:
                             o.ai.validateSecret(stuff)
                             if self.turn==masterTurn-1:
-                                textScroll("Printed Secret:" + str(stuff))
+                                textScroll(self.turn, "Printed Secret:" + str(stuff))
                             gaveSecret=True
                         except:
                             if self.turn==masterTurn-1:
-                                textScroll("This base does not have a printer")
+                                textScroll(self.turn, "This base does not have a printer")
             if gaveSecret==False:
                 if self.turn==masterTurn-1:
-                    textScroll("Failed to print at the base")
+                    textScroll(self.turn, "Failed to print at the base")
 
             self.turn+=1
 
 
-    def checkTerrainForward(self, x, y, direction):
-        print("")
+    def checkTerrainForward(self):
+        x, y = self.getFrontSquare(self.x, self.y, self.direction)
+        if 0 <=x <=9 and 0<=y<=9:
+            return aryTiles[x][y][2]
+        else:
+            return "edge"
+
+    def checkTerrainLeft(self):
+        x, y = self.getLeftSquare(self.x, self.y, self.direction)
+        if 0 <=x <=9 and 0<=y<=9:
+            return aryTiles[x][y][2]
+        else:
+            return "edge"
+
+    def checkTerrainRight(self):
+        x, y = self.getRightSquare(self.x, self.y, self.direction)
+        if 0 <=x <=9 and 0<=y<=9:
+            return aryTiles[x][y][2]
+        else:
+            return "edge"
+
+    def checkObjectForward(self):
+        global objects
+        x, y = self.getFrontSquare(self.x, self.y, self.direction)
+        for o in objects:
+            if o.x==x and o.y==y and o.checkAlive(o, self.turn):
+                return o
+        obj = object(-1,-1,0,pygame.Surface((1,1)))
+        obj.type=0
+        obj.name=""
+        obj.health=0
+
+
+        return obj
+
+    def checkObjectLeft(self):
+        global objects
+        x, y = self.getLeftSquare(self.x, self.y, self.direction)
+        for o in objects:
+            if o.x==x and o.y==y and o.checkAlive(o, self.turn):
+                return o.type, o.name
+        return 0, ""
+
+    def checkObjectRight(self):
+        global objects
+        x, y = self.getRightSquare(self.x, self.y, self.direction)
+        for o in objects:
+            if o.x==x and o.y==y and o.checkAlive(o, self.turn):
+                return o.type, o.name
+        return 0, ""
 
     def getFrontSquare(self, x, y, direction):
         newx = x
@@ -234,18 +269,198 @@ class object():
             newx+=1
         return newx, newy
 
+    def getBackSquare(self, x, y, direction):
+        newx = x
+        newy = y
+        if self.direction==0: # north
+            newy+=1
+        elif self.direction==1: # west
+            newx +=1
+        elif self.direction==2: #south
+            newy-=1
+        elif self.direction==3: #east
+            newx-=1
+        return newx, newy
+
 
     def getLeftSquare(self, x,y, direction):
-        print("")
+        newx = x
+        newy = y
+        if self.direction==0: # north
+            newx-=1
+        elif self.direction==1: # west
+            newy +=1
+        elif self.direction==2: #south
+            newx+=1
+        elif self.direction==3: #east
+            newy-=1
+        return newx, newy
 
     def getRightSquare(self,x, y, direction):
+        newx = x
+        newy = y
+        if self.direction==0: # north
+            newx +=1
+        elif self.direction==1: # west
+            newy -=1
+        elif self.direction==2: #south
+            newx -=1
+        elif self.direction==3: #east
+            newy +=1
+        return newx, newy
+
+    def checkForObstacles(self, x, y):
+        global objects
+        # returns 0 for no obstacle
+        # return 1 for obstacle
+        if  y < 0  or x < 0 or y > 10 or x > 10:
+            return 1
+        else:
+            if aryTiles[x][y][1]!=0:
+                return 1
+            else:
+                for o in objects:
+                    if (o.x == x and o.y == y and o.checkAlive(o, self.turn)):
+                        return 1
+                return 0
+
+    def checkAlive(self, obj, currentTurn):
+        damage =0
+        for i in range(0, currentTurn):
+            if i in obj.healthHistory:
+                damage += obj.healthHistory[i]
+        
+        if obj.health+damage > 0:
+            return True
+        else:
+            return False
+
+    def attack(self):
+        global objects
+        if self.turn < masterTurn:
+            x,y = self.getFrontSquare(self.x, self.y, self.direction)
+            
+            for o in objects:
+                if o.x==x and o.y==y and o.type==1 and o.checkAlive(o, self.turn):
+                    if self.turn==masterTurn-1:
+                        damage = -1 * randint(5,10)
+                        if self.turn in o.healthHistory:
+                            o.healthHistory[self.turn] += damage
+                        else:
+                            o.healthHistory[self.turn] = damage
+                        
+                        for i in o.healthHistory:
+                            o.health += o.healthHistory[i]
+                        status = "Attacked for " + str(damage) + " points. Health is " + str(o.health)
+
+        if self.turn==masterTurn-1:
+            textScroll(self.turn, status)
+            
+        self.turn+=1
+
+    def locateObject(self, objName):
+        global objects
+        for o in objects:
+            if o.name==objName and o.checkAlive(o, self.turn):
+                xdiff = o.x-self.x
+                ydiff = o.y-self.y
+
+                reldirection = self.getRelDirection(xdiff, ydiff, self.direction)
+
+                return o.x,o.y, reldirection
+        return
+                 
+
+
+    
+    def locateAllOpponents(self):
         print("")
 
+    def getRelDirection(self, xdiff, ydiff, direction):
+        if xdiff>=0 and ydiff >=0:
+            if abs(xdiff) > abs(ydiff):
+                if direction==0:
+                    return "right"
+                elif direction==1:
+                    return "back"
+                elif direction==2:
+                    return "left"
+                elif direction==3:
+                    return "front"
+            else:
+                if direction==0:
+                    return "back"
+                elif direction==1:
+                    return "left"
+                elif direction==2:
+                    return "front"
+                elif direction==3:
+                    return "right"
+        elif xdiff >=0 and ydiff < 0:
+            if abs(xdiff) > abs(ydiff):
+                if direction==0:
+                    return "right"
+                elif direction==1:
+                    return "back"
+                elif direction==2:
+                    return "left"
+                elif direction==3:
+                    return "front"
+            else:
+                if direction==0:
+                    return "front"
+                elif direction==1:
+                    return "right"
+                elif direction==2:
+                    return "back"
+                elif direction==3:
+                    return "left"
+        elif xdiff < 0 and ydiff >= 0:
+            if abs(xdiff) > abs(ydiff):
+                if direction==0:
+                    return "left"
+                elif direction==1:
+                    return "front"
+                elif direction==2:
+                    return "right"
+                elif direction==3:
+                    return "back"
+            else:
+                if direction==0:
+                    return "back"
+                elif direction==1:
+                    return "left"
+                elif direction==2:
+                    return "front"
+                elif direction==3:
+                    return "right"
+        elif xdiff < 0 and ydiff < 0:
+            if abs(xdiff) > abs(ydiff):
+                if direction==0:
+                    return "left"
+                elif direction==1:
+                    return "front"
+                elif direction==2:
+                    return "right"
+                elif direction==3:
+                    return "back"
+            else:
+                if direction==0:
+                    return "front"
+                elif direction==1:
+                    return "right"
+                elif direction==2:
+                    return "back"
+                elif direction==3:
+                    return "left"
 
 class player(object):
-    def __init__(self, coordx, coordy,  ai, direction, sImg):
+    def __init__(self, coordx, coordy,  ai, direction, sImg, subType, name):
         super().__init__(coordx, coordy,direction, sImg)
+        # 0 = main player,  1 = AI opponents
+        self.subType = subType
         self.health=100
+        self.energy=50
         self.ai = ai
         ai.robot = self
         # 1 = player1, 2=base
@@ -253,10 +468,11 @@ class player(object):
         self.OrigSurfImg = sImg
         self.surfImg = pygame.transform.rotate(self.OrigSurfImg, self.direction*90)
         self.direction = direction
+        self.name=name
             
 
 class base(object):
-    def __init__(self, coordx, coordy, ai, direction, sImg, subType):
+    def __init__(self, coordx, coordy, ai, direction, sImg, subType, name):
         super().__init__(coordx, coordy, direction, sImg)
         self.subType = subType
         # 1 = player1, 2=base
@@ -266,6 +482,8 @@ class base(object):
         self.direction = direction
         self.ai = ai
         ai.robot = self
+        self.name=name
+        self.health=100
     
     def checkTouch(self):
         # Is there a player touching the base?
@@ -327,7 +545,7 @@ def drawIntro(levels):
     row = 0
     for level in levels:
         
-        button(level[1],FIRST_BUTTON_X+col*(BUTTON_WIDTH+BUTTON_HORZ_SPACING),FIRST_BUTTON_Y+row*(BUTTON_VERT_SPACING+BUTTON_HEIGHT),BUTTON_WIDTH,BUTTON_HEIGHT,GREEN,BRIGHT_GREEN,action=chooseLevel, param1=level[0], param2=level[2])
+        button(level[1],FIRST_BUTTON_X+col*(BUTTON_WIDTH+BUTTON_HORZ_SPACING),FIRST_BUTTON_Y+row*(BUTTON_VERT_SPACING+BUTTON_HEIGHT),BUTTON_WIDTH,BUTTON_HEIGHT,GREEN,BRIGHT_GREEN,action=chooseLevel, param1=level[0])
 
         btnNum+=1
         col = math.floor(btnNum/10)
@@ -336,7 +554,7 @@ def drawIntro(levels):
     pygame.display.update()
     clock.tick(15)
 
-def chooseLevel(levelfile=currentLevelFile, solnfile=currentSolnFile):
+def chooseLevel(levelfile=currentLevelFile):
     global intro, aryTiles, objects, instructions, maxTurns, state, loseMsg, currentLevelFile, currentSolnFile
     global state, masterTurn, maxTurns
     masterTurn=0
@@ -349,18 +567,13 @@ def chooseLevel(levelfile=currentLevelFile, solnfile=currentSolnFile):
     else:
         levelfile = currentLevelFile
 
-    if solnfile != '':
-        currentSolnFile = solnfile
-    else:
-        solnfile = currentSolnFile
 
     intro=False
     #Dynamically import the robots as modules
     #ai1name=input("What is the name of your bot?").strip()
 
     importlib.invalidate_caches()
-    ai1 = importlib.import_module(solnfile)
-    importlib.reload(ai1)
+
 
     level = importlib.import_module(levelfile)
 
@@ -377,26 +590,34 @@ def chooseLevel(levelfile=currentLevelFile, solnfile=currentSolnFile):
     i = level.Instructions()
     instructions=i.loadInstructions()
 
+ 
+        
+
+    for lo in los:
+        #x,y,direction, sImg, type, SubType
+        #type: 1=player, 2=base
+        #subtype: 0 = real player, 1 = AI player
+        if lo[4]==1:  #player
+            ai1 = importlib.import_module(lo[6])
+            importlib.reload(ai1)
+            objects.append( player(lo[0],lo[1], ai1.AI(), lo[2], lo[3], lo[5],lo[7])) 
+            if lo[5]==0:
+                solnfile = lo[6]
+
+        elif lo[4]==2:  #base
+            ai = __import__(lo[6])
+            try:
+                objects.append( base(lo[0],lo[1], ai.AI(lo[8]),lo[2], lo[3], lo[5],lo[7]))
+            except IndexError:
+                objects.append( base(lo[0],lo[1], ai.AI(),lo[2], lo[3], lo[5],lo[7]))
+        
     v = level.Validate()
     strVal = v.validateSoln(solnfile)
     if strVal!="":
         textScroll(strVal)
         loseMsg=strVal
         state="lose"
-        
 
-    for lo in los:
-        #x,y,direction, sImg, type, SubType
-        #type: 1=player, 2=base
-        if lo[4]==1:  #player
-            objects.append( player(lo[0],lo[1], ai1.AI(), lo[2], lo[3])) #player1
-        elif lo[4]==2:  #base
-            ai = __import__(lo[6])
-            try:
-                objects.append( base(lo[0],lo[1], ai.AI(lo[7]),lo[2], lo[3], lo[5]))
-            except IndexError:
-                objects.append( base(lo[0],lo[1], ai.AI(),lo[2], lo[3], lo[5]))
-                
 def GoToIntro():
     global intro
 
@@ -426,8 +647,26 @@ def drawBattlefieldPygame():
             screen.blit(aryTiles[tile][tileRow][0], rectground)
 
     #Objects
+    numOfPlayers=0
     for o in objects:
-        screen.blit(o.surfImg, o.getRect())
+        #for players
+        if o.type==1:
+            #Draw the robot's health bars
+            text = font.render(o.name, True, WHITE) 
+            if o.checkAlive(o, masterTurn):
+                screen.blit(text, pygame.Rect(600,4+ 45*numOfPlayers, 195, 10))
+                pygame.draw.rect(screen,(0,255,0),((600,22+ 45*numOfPlayers),(int(o.health*195/100.0),10)))
+                screen.blit(o.surfImg, o.getRect())
+            if o.energy > 0:
+                screen.blit(smallfont.render("Health", True, BLACK), pygame.Rect(600,22+ 45*numOfPlayers, 195, 10))
+                pygame.draw.rect(screen,(255,255,0),((600,34+ 45*numOfPlayers),(int(o.energy*195/100.0),10)))
+            screen.blit(smallfont.render("Energy", True, BLACK), pygame.Rect(600,34+ 45*numOfPlayers, 195, 10))
+            numOfPlayers+=1
+        elif o.type==2:
+            if o.checkAlive(o, masterTurn):
+                screen.blit(o.surfImg, o.getRect())
+
+        
         
         s = pygame.Surface((TILESIZE,TILESIZE))  # the size of your rect
         s.set_alpha(50)                # alpha level
@@ -438,42 +677,43 @@ def drawBattlefieldPygame():
             screen.blit(s, trailRect)    # (0,0) are the top-left coordinates
 
 
+    #textScroll
     drawText(screen, textBlob, (255, 255, 255), (603,155,194,600), textfont, aa=True, bkg=(255, 255, 0))
 
+    rectw = 600
+    recth = 200
+    NOTE_X = 0
+    NOTE_Y = 600
+    BUTTON_WIDTH = 100
+    BUTTON_HEIGHT = 30
+    BUTTON1_X = 20
+    BUTTON1_Y = DISPLAY_HEIGHT - 20 - BUTTON_HEIGHT
+    BUTTON2_X = BUTTON1_X + BUTTON_WIDTH + 20
+    BUTTON2_Y = BUTTON1_Y
     if masterTurn==0:
-        rectw = int(math.floor(DISPLAY_WIDTH*3/7))
-        recth = int(math.floor(DISPLAY_HEIGHT*3/7))
         sInstructions = pygame.Surface((rectw, recth))
         sInstructions.fill(DARK_GRAY)
-        rectInstructions=pygame.Rect(int(DISPLAY_WIDTH*4/7), int(DISPLAY_HEIGHT*4/7), rectw, recth)
+        rectInstructions=pygame.Rect(NOTE_X, NOTE_Y, rectw, recth)
         screen.blit(sInstructions, rectInstructions)
         drawText(screen, instructions, (255,255,255), rectInstructions, instructionFont, aa=True, bkg=(255,255,255))
 
     if state=="win":
-        rectw = int(DISPLAY_WIDTH*3/7)
-        recth = int(DISPLAY_HEIGHT*3/7)
         sInstructions = pygame.Surface((rectw, recth))
         sInstructions.fill(DARK_GRAY)
-        rectInstructions=pygame.Rect(int(DISPLAY_WIDTH*4/7), int(DISPLAY_HEIGHT*4/7), rectw, recth)
+        rectInstructions=pygame.Rect(NOTE_X, NOTE_Y, rectw, recth)
         screen.blit(sInstructions, rectInstructions)
         drawText(screen, "You did it!", (255,255,255), rectInstructions, instructionFont, aa=True, bkg=(255,255,255))
-
-        BUTTON_WIDTH = 100
-        BUTTON_HEIGHT = 30
-        button("New Level",int(DISPLAY_WIDTH)-int(rectw/2)-int(BUTTON_WIDTH),int(DISPLAY_HEIGHT) - int(BUTTON_HEIGHT)-10,BUTTON_WIDTH,BUTTON_HEIGHT,GREEN,BRIGHT_GREEN,action=GoToIntro)
+        button("New Level",BUTTON1_X, BUTTON1_Y,BUTTON_WIDTH,BUTTON_HEIGHT,GREEN,BRIGHT_GREEN,action=GoToIntro)
     elif state=="lose":
-        rectw = int(DISPLAY_WIDTH*3/7)
-        recth = int(DISPLAY_HEIGHT*3/7)
         sInstructions = pygame.Surface((rectw, recth))
         sInstructions.fill(DARK_GRAY)
-        rectInstructions=pygame.Rect(int(DISPLAY_WIDTH*4/7), int(DISPLAY_HEIGHT*4/7), rectw, recth)
+        rectInstructions=pygame.Rect(NOTE_X, NOTE_Y, rectw, recth)
         screen.blit(sInstructions, rectInstructions)
         drawText(screen, loseMsg, (255,255,255), rectInstructions, instructionFont, aa=True, bkg=(255,255,255))
 
-        BUTTON_WIDTH = 100
-        BUTTON_HEIGHT = 30
-        button("Try Again",int(DISPLAY_WIDTH)-int(rectw*2/3)-int(BUTTON_WIDTH),int(DISPLAY_HEIGHT) - int(BUTTON_HEIGHT)-10,BUTTON_WIDTH,BUTTON_HEIGHT,GREEN,BRIGHT_GREEN,action=chooseLevel)
-        button("Back to Levels",int(DISPLAY_WIDTH)-int(rectw*1/4)-int(BUTTON_WIDTH),int(DISPLAY_HEIGHT) - int(BUTTON_HEIGHT)-10,BUTTON_WIDTH,BUTTON_HEIGHT,GREEN,BRIGHT_GREEN,action=GoToIntro)
+
+        button("Try Again",BUTTON1_X, BUTTON1_Y,BUTTON_WIDTH,BUTTON_HEIGHT,GREEN,BRIGHT_GREEN,action=chooseLevel)
+        button("Back to Levels",BUTTON2_X,BUTTON2_Y,BUTTON_WIDTH,BUTTON_HEIGHT,GREEN,BRIGHT_GREEN,action=GoToIntro)
     pygame.display.update()
 
     #add a delay between frames
@@ -530,12 +770,12 @@ def drawText(surface, text, color, rect, font, aa=False, bkg=None):
             # Remove leading and trailing newline and spaces.
             text = text[i:].strip() 
 
-def textScroll(msg):
+def textScroll(turn, msg):
     global textList, textBlob
     
-    textList.insert(0, msg)
+    textList.insert(0, str(turn) + "-" + msg)
 
-    if len(textList) > 10:
+    if len(textList) > 20:
         textList.pop()
     
     textBlob = ""
@@ -575,9 +815,9 @@ while True:
                 loseMsg="You must finish this level in less than " + str(maxTurns) + " turns."
 
             
-            if state=="" and len(textList) > 0:
-                if "This is turn:" not in textList[0]:
-                    textScroll("This is turn:" + str(masterTurn))
+            #if state=="" and len(textList) > 0:
+                #if "This is turn:" not in textList[0]:
+                    #textScroll("This is turn:" + str(masterTurn))
 
             drawBattlefieldPygame()
             
@@ -595,7 +835,7 @@ while True:
                         print(e)
             
             #base loop
-            basesleft=0
+            missionsleft=0
             for o in objects:
                 if o.type==2:
                     try:
@@ -603,12 +843,23 @@ while True:
                             state="win"
                             break
                         elif o.ai.turn()==0:
-                            basesleft+=1
+                            missionsleft+=1
                     except Exception as e:
                         print("failed with error:")
                         print(e)
+                #AI
+                if o.type==1 and o.subType==1:
+                    try:
+                        if o.ai.turn()==2:
+                            state="win"
+                            break
+                        elif o.ai.turn()==0:
+                            missionsleft+=1
+                    except Exception as e:
+                        print("failed with error:")
+                        print(e) 
 
-            if basesleft==0:
+            if missionsleft==0:
                 state="win"
 
 

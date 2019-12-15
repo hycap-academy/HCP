@@ -11,7 +11,7 @@ class AI:
         return self.missionStatus
 
     def validateSecret(self, strGuess):
-        if strGuess=="butterfly":
+        if strGuess==self.secret:
             self.missionStatus=2
         else:
             self.missionStatus=0

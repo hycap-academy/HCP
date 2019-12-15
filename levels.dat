@@ -1,14 +1,21 @@
-level1:1.Move Fwd:soln1
-level2:2.Fwd/Turn:soln2
-level3:3.Loop Fwd:soln3
-level4:4.Loop 2:soln4
-level5:5.Loop 3:soln5
-level6:6.Loop 4:soln6
-level7:7.Print:soln7
-level8:8.Move & Print:soln8
-level9:9.If/Then:soln9
-level10:10.If/Then 2:soln10
-level11:11.If/Then 3:soln11
-level12:12.String:soln12
-level13:13.String 2:soln13
-level14:14.String 3:soln14
+level1:1.Move Fwd
+level2:2.Fwd/Turn
+level3:3.Loop Fwd
+level4:4.Loop 2
+level5:5.Loop 3
+level6:6.Loop 4
+level7:7.Print
+level8:8.Move & Print
+level9:9.If/Then 1
+level10:10.If/Then 2
+level11:11.If/Then 3
+level12:12.If/Then 4
+level13:13.If/Then 5*
+level14:14.If/Then 6*
+level15:15.Attack
+level16:16.Attack 2*
+level17:17.Locate 1
+level18:18.Locate 2
+level19:19.Locate 3
+level20:20.Locate 4*
+level21:21.Locate 5*

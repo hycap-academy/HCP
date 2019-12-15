@@ -34,9 +34,10 @@ class LevelObjects():
         #type: 1=player, 2=base
         # direction: 0=north, 1=west, 2=south, 3=east
         m = maptranslator.MapMaker()
-        levelObject=[4,4,3,m.getSurf("dozerblue"),1]
+        soln= __name__.replace("level", "soln")
+        levelObject=[4,4,3,m.getSurf("dozerblue"),1,0, soln, "player blue"]
         levelObjects.append(levelObject)
-        levelObject=[2,2,0, m.getSurf("basered"), 2,1, "baseAITouchbase"]
+        levelObject=[2,2,0, m.getSurf("basered"), 2,1, "baseAITouchbase", "base 1"]
         levelObjects.append(levelObject)
         return levelObjects
 
@@ -45,7 +46,7 @@ class Instructions():
         print("loading instructions")
 
     def loadInstructions(self):
-        return "Move your dozer to the blue base \n by using a single self.robot.moveForward() \ncommand and a for loop."
+        return "Move your dozer to the red base \n by using a single self.robot.moveForward() \ncommand and a for loop."
 
 
 class Validate():

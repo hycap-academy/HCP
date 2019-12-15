@@ -4,12 +4,13 @@
 #  A for loop looks like this:
 #  for x in range(0, 2):  OR  for x in range(2):
 #  This will loop 2 times.
-
-
+import inspect
+if "rungame" not in inspect.getmodule(inspect.stack()[0])._filesbymodname["__main__"]:
+    import rungame
 
 class AI:
     def __init__(self):
-        print("soln4 AI loaded")
+        print(__name__ + " AI Loaded")
 
     def turn(self):
         #  Your code goes here.

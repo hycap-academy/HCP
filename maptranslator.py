@@ -11,10 +11,12 @@ class MapMaker():
             return pygame.transform.scale(ss.image_at((2*16+1, 16*16+1, 16, 16)).convert_alpha(), (self.TILESIZE, self.TILESIZE))
         elif surfType =="baseblack":
             return pygame.transform.scale(ss.image_at((2*16+1, 17*16+1, 16, 16)).convert_alpha(), (self.TILESIZE, self.TILESIZE))
-        elif surfType =="baseblack":
+        elif surfType =="baseyellow":
             return pygame.transform.scale(ss.image_at((2*16+1, 18*16+1, 16, 16)).convert_alpha(), (self.TILESIZE, self.TILESIZE))
         elif surfType=="dozerblue":
             return pygame.transform.scale(pygame.image.load("DozerBlue.png").convert_alpha(), (self.TILESIZE, self.TILESIZE))
+        elif surfType=="dozerred":
+            return pygame.transform.scale(pygame.image.load("DozerRed.png").convert_alpha(), (self.TILESIZE, self.TILESIZE))
 
     def makeMap(self, map):
         self.map = map.replace("\n", "").replace("\t", "")
