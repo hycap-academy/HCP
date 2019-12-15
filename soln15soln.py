@@ -40,5 +40,5 @@ class AI:
         for n in range(3):
             self.robot.moveForward()
         
-        for n in range(10):
+        for n in range(20):
             self.robot.attack()

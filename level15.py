@@ -30,7 +30,7 @@ class Map():
 class LevelObjects():
     def __init__(self):
         print("loading level objects")
-        self.MaxTurns=10
+        self.MaxTurns=30
 
     def loadObjects(self):
         levelObjects=[]

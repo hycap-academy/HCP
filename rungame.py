@@ -655,7 +655,8 @@ def drawBattlefieldPygame():
             text = font.render(o.name, True, WHITE) 
             if o.checkAlive(o, masterTurn):
                 screen.blit(text, pygame.Rect(600,4+ 45*numOfPlayers, 195, 10))
-                pygame.draw.rect(screen,(0,255,0),((600,22+ 45*numOfPlayers),(int(o.health*195/100.0),10)))
+                
+                pygame.draw.rect(screen,(0,255,0),((600,22+ 45*numOfPlayers),(((int(o.health)+sum(o.healthHistory.values()))*195/100.0),10)))
                 screen.blit(o.surfImg, o.getRect())
             if o.energy > 0:
                 screen.blit(smallfont.render("Health", True, BLACK), pygame.Rect(600,22+ 45*numOfPlayers, 195, 10))

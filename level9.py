@@ -18,7 +18,7 @@ class Map():
                 g1g1wzwhwcg1g1g1g1g1
                 g1g1g1g1g1g1g1g1g1g1
                 g1g1g1g1g1g1g1g1g1g1
-                g1g1g1wzwhwcg1g1g1g1"""
+                g1g1g1g1g1g1g1g1g1g1"""
 
 
 
