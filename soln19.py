@@ -48,21 +48,8 @@ class AI:
                 if reldir=="front":
                     terrain = self.robot.checkTerrainForward()
                     if terrain=="wall":
-                        self.robot.turnLeft()
+                        print("uh oh, there's a wall in front")
                     else:
-                        self.robot.moveForward()
-                if reldir=="left":
-                    terrain = self.robot.checkTerrainLeft()
-                    if terrain=="wall":
-                        self.robot.moveForward()
-                    else:
-                        self.robot.turnLeft()
-                if reldir=="right":
-                    terrain = self.robot.checkTerrainRight()
-                    if terrain=="wall":
-                        self.robot.moveForward()
-                    else:
-                        self.robot.turnRight()
-                if reldir=="back":
-                    self.robot.turnRight()
+                        print("There's no wall.")
+
             

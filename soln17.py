@@ -41,5 +41,4 @@ class AI:
             x,y,reldir = self.robot.locateObject("base 1")
             if reldir=="front":
                 self.robot.moveForward()
-            else:
-                self.robot.turnLeft()
+

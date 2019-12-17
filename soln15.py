@@ -25,8 +25,5 @@ class AI:
         ###__________________________________
 
             self.robot.moveForward()
-            self.robot.moveForward()
-            self.robot.moveForward()
 
-            for n in range(0,20):
-                self.robot.attack()
+            self.robot.attack()

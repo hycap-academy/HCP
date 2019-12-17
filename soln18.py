@@ -46,6 +46,6 @@ class AI:
             else:
                 x,y,reldir = self.robot.locateObject("opponent1")
                 if reldir=="front":
-                    self.robot.moveForward()
+                    print("the opponent is in front of me")
 
                 

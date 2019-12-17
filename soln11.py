@@ -15,8 +15,8 @@ class AI:
         #  You can only use the moveForward command once.
         #
         #  You can check if there is something in front of you:
-        #  objType, name = self.robot.checkObjectForward()
-        #  objType will return 1 for player and 2 for base.  It will return 0 if there is nothing.
+        #  obj = self.robot.checkObjectForward()
+        #  obj.type will return 1 for player and 2 for base.  It will return 0 if there is nothing.
         #  You can also checkObjectRight() and checkObjectLeft()
         #
         #  then use the self.robot.print("butterfly") at the base.
@@ -27,14 +27,16 @@ class AI:
         for n in range(25):
             obj = self.robot.checkObjectForward()
             if obj.type==2:
+                print("there's a base in front of me!")
                 self.robot.print("butterfly")
             else:
                 terrain = self.robot.checkTerrainForward() 
                 if terrain == "wall":
+                    print("There's a wall in front of me!")
                     checkL = self.robot.checkTerrainLeft()
                     if checkL=="grass":
-                        self.robot.turnLeft()
+                        print("There's grass to the left")
                     else:
-                        self.robot.turnRight()
+                        print("There's no grass to the left")
                 else:
-                    self.robot.moveForward()
+                    print("no obstacles!")

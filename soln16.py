@@ -24,13 +24,11 @@ class AI:
         #  Start below the line
         ###__________________________________
 
-            for n in range(0, 3):
-                self.robot.moveForward()
 
-            for j in range(0, 20):
-                obj = self.robot.checkObjectForward()
-                if obj.type==1:
-                    self.robot.attack()
-                else:
-                    break
+        self.robot.moveForward()
+
+        obj = self.robot.checkObjectForward()
+        if obj.type==1:
+            self.robot.attack()
+
             
