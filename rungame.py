@@ -620,7 +620,7 @@ def chooseLevel(levelfile=currentLevelFile):
     v = level.Validate()
     strVal = v.validateSoln(solnfile)
     if strVal!="":
-        textScroll(strVal)
+        textScroll(0, strVal)
         loseMsg=strVal
         state="lose"
 
